@@ -1,0 +1,8 @@
+runtime: nodejs18
+entrypoint: npm start
+
+env_variables:
+  DATABASE_URL: "mysql://ed:1234@/intuitive_planner_dev?unix_socket=/cloudsql/intuitiveplanner:us-east4:intuitive-planner-db"
+
+manual_scaling:
+  instances: 1

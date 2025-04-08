@@ -1,0 +1,918 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "debian-openssl-1.1.x"]
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Customer {
+  id                             Int                             @id @default(autoincrement())
+  name                           String
+  continent                      String
+  country                        String
+  state                          String
+  city                           String
+  createdAt                      DateTime                        @default(now())
+  updatedAt                      DateTime                        @updatedAt
+  projects                       Project[]
+  sites                          Site[]
+  buildings                      Building[]
+  floors                         Floor[]
+  networkRooms                   NetworkRoom[]
+  meetMeRooms                    MeetMeRoom[]
+  dataHalls                      DataHall[]
+  zones                          Zone[]
+  scalableUnitZones              ScalableUnitZone[]
+  storageUnitZones               StorageUnitZone[]
+  superSpineZones                SuperSpineZone[]
+  spineLeafZones                 SpineLeafZone[]
+  racks                          Rack[]
+  rackUnits                      RackUnit[]
+  networkSwitches                NetworkSwitch[]
+  fiberTrunkCables               FiberTrunkCable[]
+  fiberTrunkCableLegs            FiberTrunkCableLeg[]
+  gpus                           Gpu[]
+  fiberTransceiverTypes          FiberTransceiverType[]
+  gpuPorts                       GpuPort[]
+  patchPanels                    PatchPanel[]
+  patchPanelPorts                PatchPanelPort[]
+  ocpRacks                       OcpRack[]
+  servers                        Server[]
+  cpuComputeRacks                CpuComputeRack[]
+  gpuComputeRacks                GpuComputeRack[]
+  leafSwitchs                    LeafSwitch[]
+  leafSwitchPorts                LeafSwitchPort[]
+  spineLeafSwitches              SpineLeafSwitch[]
+  spineSwitchPorts               SpineSwitchPort[]
+  superSpineLeafSwitches         SuperSpineLeafSwitch[]
+  superSpineSwitchPorts          SuperSpineSwitchPort[]
+  leafSwitchRacks                LeafSwitchRack[]
+  spineLeafSwitchRacks           SpineLeafSwitchRack[]
+  superSpineSwitchRacks          SuperSpineSwitchRack[]
+  containments                   Containment[]
+  coolings                       Cooling[]
+  connectivityPaths              ConnectivityPath[]
+  networkCabinets                NetworkCabinet[]
+  cables                         Cable[]
+  patchPanelModulePorts          PatchPanelModulePort[]
+  networkTypes                   NetworkType[]
+  networkTopologies              NetworkTopology[]
+  gpuFrontSides                  GpuFrontSide[]
+  gpuRearSides                   GpuRearSide[]
+  networkTypeSouths              NetworkTypeSouth[]
+  scalableUnitGpuLeafSwitchRacks ScalableUnitGpuLeafSwitchRack[]
+  leafSwitchGbicPorts            LeafSwitchGbicPort[]
+}
+
+model Project {
+  id         Int      @id @default(autoincrement())
+  name       String
+  sites      Site[]
+  customer   Customer @relation(fields: [customerId], references: [id])
+  customerId Int
+}
+
+model Site {
+  id         Int        @id @default(autoincrement())
+  name       String
+  buildings  Building[]
+  customer   Customer   @relation(fields: [customerId], references: [id])
+  customerId Int
+  project    Project    @relation(fields: [projectId], references: [id])
+  projectId  Int
+}
+
+model Building {
+  id         Int      @id @default(autoincrement())
+  name       String
+  floors     Floor[]
+  customer   Customer @relation(fields: [customerId], references: [id])
+  customerId Int
+  site       Site     @relation(fields: [siteId], references: [id])
+  siteId     Int
+}
+
+model Floor {
+  id           Int           @id @default(autoincrement())
+  name         String
+  lengthMeters Float
+  widthMeters  Float
+  meetMeRooms  MeetMeRoom[]
+  dataHalls    DataHall[]
+  networkRooms NetworkRoom[]
+  customer     Customer      @relation(fields: [customerId], references: [id])
+  customerId   Int
+  building     Building      @relation(fields: [buildingId], references: [id])
+  buildingId   Int
+}
+
+model NetworkRoom {
+  id              Int              @id @default(autoincrement())
+  name            String
+  tilesWidth      Int
+  tilesLength     Int
+  networkCabinets NetworkCabinet[]
+  customer        Customer         @relation(fields: [customerId], references: [id])
+  customerId      Int
+  floor           Floor            @relation(fields: [floorId], references: [id])
+  floorId         Int
+}
+
+model MeetMeRoom {
+  id              Int              @id @default(autoincrement())
+  name            String
+  networkCabinets NetworkCabinet[]
+  tilesWidth      Int
+  tilesLength     Int
+  customer        Customer         @relation(fields: [customerId], references: [id])
+  customerId      Int
+  floor           Floor            @relation(fields: [floorId], references: [id])
+  floorId         Int
+}
+
+model DataHall {
+  id                            Int                             @id @default(autoincrement())
+  name                          String
+  tilesWidth                    Int
+  tilesLength                   Int
+  customer                      Customer                        @relation(fields: [customerId], references: [id])
+  customerId                    Int
+  floor                         Floor                           @relation(fields: [floorId], references: [id])
+  floorId                       Int
+  zone                          Zone[]
+  scalableUnitZone              ScalableUnitZone[]
+  storageUnitZone               StorageUnitZone[]
+  superSpineZone                SuperSpineZone[]
+  spineLeafZone                 SpineLeafZone[]
+  rack                          Rack[]
+  rackUnit                      RackUnit[]
+  networkSwitch                 NetworkSwitch[]
+  fiberTrunkCable               FiberTrunkCable[]
+  fiberTrunkCableLeg            FiberTrunkCableLeg[]
+  gpu                           Gpu[]
+  fiberTransceiverType          FiberTransceiverType[]
+  gpuPort                       GpuPort[]
+  patchPanel                    PatchPanel[]
+  patchPanelPort                PatchPanelPort[]
+  ocpRack                       OcpRack[]
+  server                        Server[]
+  cpuComputeRack                CpuComputeRack[]
+  gpuComputeRack                GpuComputeRack[]
+  leafSwitch                    LeafSwitch[]
+  leafSwitchPort                LeafSwitchPort[]
+  spineLeafSwitch               SpineLeafSwitch[]
+  spineSwitchPort               SpineSwitchPort[]
+  superSpineLeafSwitch          SuperSpineLeafSwitch[]
+  superSpineSwitchPort          SuperSpineSwitchPort[]
+  leafSwitchRack                LeafSwitchRack[]
+  spineLeafSwitchRack           SpineLeafSwitchRack[]
+  superSpineSwitchRack          SuperSpineSwitchRack[]
+  containment                   Containment[]
+  cooling                       Cooling[]
+  connectivityPath              ConnectivityPath[]
+  networkCabinet                NetworkCabinet[]
+  cable                         Cable[]
+  patchPanelModulePort          PatchPanelModulePort[]
+  networkType                   NetworkType[]
+  networkTopology               NetworkTopology[]
+  gpuFrontSide                  GpuFrontSide[]
+  gpuRearSide                   GpuRearSide[]
+  networkTypeSouth              NetworkTypeSouth[]
+  scalableUnitGpuLeafSwitchRack ScalableUnitGpuLeafSwitchRack[]
+  leafSwitchGbicPort            LeafSwitchGbicPort[]
+}
+
+// ####################################################
+// ################## Zone Management #################
+// ####################################################
+
+model ZoneType {
+  id          Int    @id @default(autoincrement())
+  name        String
+  description String
+  zones       Zone[]
+}
+
+model Zone {
+  id                                   Int               @id @default(autoincrement())
+  name                                 String
+  numberOfScalableUnits                Int
+  numberOfRacks                        Int
+  numberOfTilesBetweenScalableUnitRows Int
+  numberOfTilesBetwenScalableUnits     Int
+  networkCabinets                      NetworkCabinet[]
+  patchPanels                          PatchPanel[]
+  fiberTrunkCables                     FiberTrunkCable[]
+  cables                               Cable[]
+  racks                                Rack[]
+  customer                             Customer          @relation(fields: [customerId], references: [id])
+  customerId                           Int
+  dataHall                             DataHall          @relation(fields: [dataHallId], references: [id])
+  dataHallId                           Int
+  zoneType                             ZoneType          @relation(fields: [zoneTypeId], references: [id])
+  zoneTypeId                           Int
+}
+
+model ScalableUnitZone {
+  id                                   Int      @id @default(autoincrement())
+  name                                 String
+  numberOfT1NetworkRacks               Int
+  numberOfGpuRacks                     Int
+  numberOfRows                         Int
+  numberOfTilesBetweenScalableUnitRows Int
+  numberOfTilesBetwenScalableUnits     Int
+  customer                             Customer @relation(fields: [customerId], references: [id])
+  customerId                           Int
+  dataHall                             DataHall @relation(fields: [dataHallId], references: [id])
+  dataHallId                           Int
+}
+
+model StorageUnitZone {
+  id         Int      @id @default(autoincrement())
+  name       String
+  customer   Customer @relation(fields: [customerId], references: [id])
+  customerId Int
+  dataHall   DataHall @relation(fields: [dataHallId], references: [id])
+  dataHallId Int
+}
+
+model SuperSpineZone {
+  id         Int      @id @default(autoincrement())
+  name       String
+  racks      Rack[]
+  customer   Customer @relation(fields: [customerId], references: [id])
+  customerId Int
+  dataHall   DataHall @relation(fields: [dataHallId], references: [id])
+  dataHallId Int
+}
+
+model SpineLeafZone {
+  id         Int      @id @default(autoincrement())
+  name       String
+  customer   Customer @relation(fields: [customerId], references: [id])
+  customerId Int
+  dataHall   DataHall @relation(fields: [dataHallId], references: [id])
+  dataHallId Int
+}
+
+model RackType {
+  id    Int    @id @default(autoincrement())
+  name  String
+  racks Rack[]
+}
+
+model Rack {
+  id               Int              @id @default(autoincrement())
+  name             String
+  gpuComputeRacks  GpuComputeRack[]
+  cpuComputeRacks  CpuComputeRack[]
+  customer         Customer         @relation(fields: [customerId], references: [id])
+  customerId       Int
+  dataHall         DataHall         @relation(fields: [dataHallId], references: [id])
+  dataHallId       Int
+  zone             Zone             @relation(fields: [zoneId], references: [id])
+  zoneId           Int
+  superSpineZone   SuperSpineZone   @relation(fields: [superSpineZoneId], references: [id])
+  superSpineZoneId Int
+  rackTypeId       Int
+  RackType         RackType         @relation(fields: [rackTypeId], references: [id])
+}
+
+model RackUnit {
+  id         Int      @id @default(autoincrement())
+  name       String
+  customer   Customer @relation(fields: [customerId], references: [id])
+  customerId Int
+  dataHall   DataHall @relation(fields: [dataHallId], references: [id])
+  dataHallId Int
+}
+
+model NetworkSwitch {
+  id                     Int                  @id @default(autoincrement())
+  name                   String
+  customer               Customer             @relation(fields: [customerId], references: [id])
+  customerId             Int
+  dataHall               DataHall             @relation(fields: [dataHallId], references: [id])
+  dataHallId             Int
+  networkCabinet         NetworkCabinet       @relation(fields: [networkCabinetId], references: [id])
+  networkCabinetId       Int
+  gpuComputeRack         GpuComputeRack       @relation(fields: [gpuComputeRackId], references: [id])
+  gpuComputeRackId       Int
+  cpuComputeRack         CpuComputeRack       @relation(fields: [cpuComputeRackId], references: [id])
+  cpuComputeRackId       Int
+  leafSwitchRack         LeafSwitchRack       @relation(fields: [leafSwitchRackId], references: [id])
+  leafSwitchRackId       Int
+  spineLeafSwitchRack    SpineLeafSwitchRack  @relation(fields: [spineLeafSwitchRackId], references: [id])
+  spineLeafSwitchRackId  Int
+  superSpineSwitchRack   SuperSpineSwitchRack @relation(fields: [superSpineSwitchRackId], references: [id])
+  superSpineSwitchRackId Int
+}
+
+model PatchPanelModulePort {
+  id                      Int                  @id @default(autoincrement())
+  portLocationFrontOrBack String
+  fiberTrunkCableLegs     FiberTrunkCableLeg[]
+  fiberTrunkCables        FiberTrunkCable[]
+  customer                Customer             @relation(fields: [customerId], references: [id])
+  customerId              Int
+  dataHall                DataHall             @relation(fields: [dataHallId], references: [id])
+  dataHallId              Int
+}
+
+model FiberTrunkCable {
+  id                             Int                  @id @default(autoincrement())
+  name                           String
+  fiberCableType                 String
+  fiberTrunkCableCoreCount       String
+  fiberTrunkCableSerialID        String
+  fireRating                     String
+  numberOfFiberCoresPerConnector Int
+  fibersPerSubUnit               Int
+  numberOfSubUnitsPerCable       Int
+  fiberTrunkCableDiameter        Int
+  numberOfLegsInTrunk            Int
+  lengthOfLegBreakout            Int
+  apcConnector                   Boolean
+  legLabelnumber                 String
+  cableLength                    Int
+  redundantFiberFeeds            Boolean
+  deliveredToProject             Boolean
+  cablePulled                    Boolean
+  cablePlugged                   Boolean
+  cableTested                    Boolean
+  fiberTrunkCableLegs            FiberTrunkCableLeg[]
+  customer                       Customer             @relation(fields: [customerId], references: [id])
+  customerId                     Int
+  dataHall                       DataHall             @relation(fields: [dataHallId], references: [id])
+  dataHallId                     Int
+  networkCabinet                 NetworkCabinet       @relation(fields: [networkCabinetId], references: [id])
+  networkCabinetId               Int
+  patchPanelModulePort           PatchPanelModulePort @relation(fields: [patchPanelModulePortId], references: [id])
+  patchPanelModulePortId         Int
+  zone                           Zone                 @relation(fields: [zoneId], references: [id])
+  zoneId                         Int
+  gpuComputeRack                 GpuComputeRack       @relation(fields: [gpuComputeRackId], references: [id])
+  gpuComputeRackId               Int
+  cpuComputeRack                 CpuComputeRack       @relation(fields: [cpuComputeRackId], references: [id])
+  cpuComputeRackId               Int
+  leafSwitchRack                 LeafSwitchRack       @relation(fields: [leafSwitchRackId], references: [id])
+  leafSwitchRackId               Int
+  spineLeafSwitchRack            SpineLeafSwitchRack  @relation(fields: [spineLeafSwitchRackId], references: [id])
+  spineLeafSwitchRackId          Int
+  superSpineSwitchRack           SuperSpineSwitchRack @relation(fields: [superSpineSwitchRackId], references: [id])
+  superSpineSwitchRackId         Int
+}
+
+model FiberTrunkCableLeg {
+  id                     Int                  @id @default(autoincrement())
+  nameAside              String
+  nameBside              String
+  sideAInstalledOnLeft   Boolean
+  sideBInstalledOnLeft   Boolean
+  customer               Customer             @relation(fields: [customerId], references: [id])
+  customerId             Int
+  dataHall               DataHall             @relation(fields: [dataHallId], references: [id])
+  dataHallId             Int
+  fiberTrunkCable        FiberTrunkCable      @relation(fields: [fiberTrunkCableId], references: [id])
+  fiberTrunkCableId      Int
+  patchPanelModulePort   PatchPanelModulePort @relation(fields: [patchPanelModulePortId], references: [id])
+  patchPanelModulePortId Int
+}
+
+model Gpu {
+  id                              Int            @id @default(autoincrement())
+  name                            String
+  numberFiberPortsPerGPU          Int
+  numberFiberPortsPerGPUFrontSide Int
+  fiberPortsPerGPURearSide        Int
+  powerPerGPU                     Int
+  gpuType                         String
+  gpuCost                         Int
+  gpuFrontSide                    GpuFrontSide[]
+  gpuRearSide                     GpuRearSide[]
+  customer                        Customer       @relation(fields: [customerId], references: [id])
+  customerId                      Int
+  dataHall                        DataHall       @relation(fields: [dataHallId], references: [id])
+  dataHallId                      Int
+  server                          Server         @relation(fields: [serverId], references: [id])
+  serverId                        Int
+}
+
+model FiberTransceiverType {
+  id                   Int      @id @default(autoincrement())
+  name                 String
+  transceiverType      String
+  transceiverPowerDraw Int
+  transceiverCost      Float
+  location             String
+  isInGpu              Boolean
+  isInCPU              Boolean
+  isInLeafSwitch       Boolean
+  isInSpineSwitch      Boolean
+  isInSuperSpineSwitch Boolean
+  customer             Customer @relation(fields: [customerId], references: [id])
+  customerId           Int
+  dataHall             DataHall @relation(fields: [dataHallId], references: [id])
+  dataHallId           Int
+}
+
+model GpuPort {
+  id             Int          @id @default(autoincrement())
+  name           String
+  location       String
+  customer       Customer     @relation(fields: [customerId], references: [id])
+  customerId     Int
+  dataHall       DataHall     @relation(fields: [dataHallId], references: [id])
+  dataHallId     Int
+  gpuFrontSide   GpuFrontSide @relation(fields: [gpuFrontSideId], references: [id])
+  gpuFrontSideId Int
+  gpuRearSide    GpuRearSide  @relation(fields: [gpuRearSideId], references: [id])
+  gpuRearSideId  Int
+}
+
+model PatchPanel {
+  id                           Int                  @id @default(autoincrement())
+  name                         String
+  patchPanelPresent            Boolean
+  patchPanelTypeFiberOrCopper  String
+  numberofRusPerPatchPanelType Int
+  numberofPatchPanelPorts      Int
+  locatedInRUNumber            Int
+  customer                     Customer             @relation(fields: [customerId], references: [id])
+  customerId                   Int
+  dataHall                     DataHall             @relation(fields: [dataHallId], references: [id])
+  dataHallId                   Int
+  networkCabinet               NetworkCabinet       @relation(fields: [networkCabinetId], references: [id])
+  networkCabinetId             Int
+  zone                         Zone                 @relation(fields: [zoneId], references: [id])
+  zoneId                       Int
+  gpuComputeRack               GpuComputeRack       @relation(fields: [gpuComputeRackId], references: [id])
+  gpuComputeRackId             Int
+  cpuComputeRack               CpuComputeRack       @relation(fields: [cpuComputeRackId], references: [id])
+  cpuComputeRackId             Int
+  leafSwitchRack               LeafSwitchRack       @relation(fields: [leafSwitchRackId], references: [id])
+  leafSwitchRackId             Int
+  spineLeafSwitchRack          SpineLeafSwitchRack  @relation(fields: [spineLeafSwitchRackId], references: [id])
+  spineLeafSwitchRackId        Int
+  superSpineSwitchRack         SuperSpineSwitchRack @relation(fields: [superSpineSwitchRackId], references: [id])
+  superSpineSwitchRackId       Int
+}
+
+model PatchPanelPort {
+  id                Int      @id @default(autoincrement())
+  name              String
+  locatedInRUNumber Int
+  customer          Customer @relation(fields: [customerId], references: [id])
+  customerId        Int
+  dataHall          DataHall @relation(fields: [dataHallId], references: [id])
+  dataHallId        Int
+}
+
+model OcpRack {
+  id                        Int      @id @default(autoincrement())
+  rackHeightInRackUnits     Int
+  rackWidthInMm             Int
+  containsFiberPatchPanel   Boolean
+  containsCopperPatchPanel  Boolean
+  numberOfFiberPatchPanels  Int
+  numberOfCopperPatchPanels Int
+  customer                  Customer @relation(fields: [customerId], references: [id])
+  customerId                Int
+  dataHall                  DataHall @relation(fields: [dataHallId], references: [id])
+  dataHallId                Int
+}
+
+model Server {
+  id                                Int            @id @default(autoincrement())
+  name                              String
+  deviceModelName                   String
+  deviceHostName                    String
+  deviceHostNameNumberStart         Int
+  deviceHostNameNumberEnd           Int
+  numberOfGpusPerServer             Int
+  serverRackUnitSize                Int
+  serverWidth                       String
+  serverDepth                       String
+  serverCost                        Float
+  totalNumberOfFiberPortsPerServer  Int
+  totalNumberOfCopperPortsPerServer Int
+  numberOfBackendPorts              Int
+  backendTransceiverType            String
+  numberOfFrontendMgmtPorts         Int
+  frontendTransceiverType           String
+  numberOfOutOfBandPorts            Int
+  outOfBandType                     String
+  numberOfStorageMgmtPorts          Int
+  storageTransceiverType            String
+  gpu                               Gpu[]
+  customer                          Customer       @relation(fields: [customerId], references: [id])
+  customerId                        Int
+  dataHall                          DataHall       @relation(fields: [dataHallId], references: [id])
+  dataHallId                        Int
+  gpuComputeRack                    GpuComputeRack @relation(fields: [gpuComputeRackId], references: [id])
+  gpuComputeRackId                  Int
+}
+
+model CpuComputeRack {
+  id                        Int               @id @default(autoincrement())
+  name                      String
+  containsFiberPatchPanel   Boolean
+  containsCopperPatchPanel  Boolean
+  numberOfFiberPatchPanels  Int
+  numberOfCopperPatchPanels Int
+  numberOfServersPerRack    Int
+  powerLimitPerRack         Int
+  powerFeedActive           Boolean
+  temperatureFeedActive     Boolean
+  waterLeakDetectionActive  Boolean
+  doorAccessSensorActive    Boolean
+  patchPanels               PatchPanel[]
+  cables                    Cable[]
+  fiberTrunkCables          FiberTrunkCable[]
+  networkSwitches           NetworkSwitch[]
+  customer                  Customer          @relation(fields: [customerId], references: [id])
+  customerId                Int
+  dataHall                  DataHall          @relation(fields: [dataHallId], references: [id])
+  dataHallId                Int
+  rack                      Rack              @relation(fields: [rackId], references: [id])
+  rackId                    Int
+}
+
+model GpuComputeRack {
+  id                          Int               @id @default(autoincrement())
+  name                        String
+  numberOfServersPerRack      Int
+  powerLimitPerGpuComputeRack Int
+  containsFiberPatchPanel     Boolean
+  containsCopperPatchPanel    Boolean
+  numberOfFiberPatchPanels    Int
+  numberOfCopperPatchPanels   Int
+  powerFeedActive             Boolean
+  temperatureFeedActive       Boolean
+  waterLeakDetectionActive    Boolean
+  doorAccessSensorActive      Boolean
+  patchPanels                 PatchPanel[]
+  cables                      Cable[]
+  fiberTrunkCables            FiberTrunkCable[]
+  networkSwitches             NetworkSwitch[]
+  servers                     Server[]
+  customer                    Customer          @relation(fields: [customerId], references: [id])
+  customerId                  Int
+  dataHall                    DataHall          @relation(fields: [dataHallId], references: [id])
+  dataHallId                  Int
+  rack                        Rack              @relation(fields: [rackId], references: [id])
+  rackId                      Int
+}
+
+model LeafSwitch {
+  id                              Int            @id @default(autoincrement())
+  nameOfSwitch                    String
+  sizeInNumberOfRackUnits         Int
+  switchRuLocationStart           Int
+  widthInMm                       Int
+  depthInMm                       Int
+  totalNumberOfFiberGbicPorts     Int
+  numberOfFiberPortsPerGbic       Int
+  transceiverType                 String
+  numberOfFiberPortsToGpu         Int
+  numberOfFiberPortsToSpineSwitch Int
+  powerConsumptionWatts           Int
+  cost                            Float
+  customer                        Customer       @relation(fields: [customerId], references: [id])
+  customerId                      Int
+  dataHall                        DataHall       @relation(fields: [dataHallId], references: [id])
+  dataHallId                      Int
+  leafSwitchRack                  LeafSwitchRack @relation(fields: [leafSwitchRackId], references: [id])
+  leafSwitchRackId                Int
+}
+
+model LeafSwitchPort {
+  id                      Int      @id @default(autoincrement())
+  nameOfFiberPortsToGpu   String
+  nameOfFiberPortsToSpine String
+  sideAInstalledOnLeft    Boolean
+  sideBInstalledOnLeft    Boolean
+  customer                Customer @relation(fields: [customerId], references: [id])
+  customerId              Int
+  dataHall                DataHall @relation(fields: [dataHallId], references: [id])
+  dataHallId              Int
+}
+
+model SpineLeafSwitch {
+  id                                   Int      @id @default(autoincrement())
+  nameOfSwitch                         String
+  sizeInNumberOfRackUnits              Int
+  switchRuLocationStart                Int
+  widthInMm                            Int
+  depthInMm                            Int
+  totalNumberOfFiberGbicPorts          Int
+  numberOfFiberPortsPerGbic            Int
+  transceiverType                      String
+  numberOfFiberPortsToLeafSwitch       Int
+  numberOfFiberPortsToSuperSpineSwitch Int
+  powerConsumptionWatts                Int
+  cost                                 Float
+  customer                             Customer @relation(fields: [customerId], references: [id])
+  customerId                           Int
+  dataHall                             DataHall @relation(fields: [dataHallId], references: [id])
+  dataHallId                           Int
+}
+
+model SpineSwitchPort {
+  id                           Int      @id @default(autoincrement())
+  nameOfFiberPortsToLeaf       String
+  nameOfFiberPortsToSuperSpine String
+  sideAInstalledOnLeft         Boolean
+  sideBInstalledOnLeft         Boolean
+  customer                     Customer @relation(fields: [customerId], references: [id])
+  customerId                   Int
+  dataHall                     DataHall @relation(fields: [dataHallId], references: [id])
+  dataHallId                   Int
+}
+
+model SuperSpineLeafSwitch {
+  id                              Int      @id @default(autoincrement())
+  nameOfSwitch                    String
+  sizeInNumberOfRackUnits         Int
+  switchRuLocationStart           Int
+  widthInMm                       Int
+  depthInMm                       Int
+  totalNumberOfFiberGbicPorts     Int
+  numberOfFiberPortsPerGbic       Int
+  transceiverType                 String
+  numberOfFiberPortsToSpineSwitch Int
+  numberOfFiberPortsToNetworkRoom Int
+  powerConsumptionWatts           Int
+  cost                            Float
+  customer                        Customer @relation(fields: [customerId], references: [id])
+  customerId                      Int
+  dataHall                        DataHall @relation(fields: [dataHallId], references: [id])
+  dataHallId                      Int
+}
+
+model SuperSpineSwitchPort {
+  id                            Int      @id @default(autoincrement())
+  nameOfFiberPortsToSpine       String
+  nameOfFiberPortsToNetworkRoom String
+  sideAInstalledOnLeft          Boolean
+  sideBInstalledOnLeft          Boolean
+  customer                      Customer @relation(fields: [customerId], references: [id])
+  customerId                    Int
+  dataHall                      DataHall @relation(fields: [dataHallId], references: [id])
+  dataHallId                    Int
+}
+
+model LeafSwitchRack {
+  id                          Int               @id @default(autoincrement())
+  name                        String
+  containsFiberPatchPanel     Boolean
+  containsCopperPatchPanel    Boolean
+  numberOfFiberPatchPanels    Int
+  numberOfCopperPatchPanels   Int
+  numberOfLeafSwitchesPerRack Int
+  patchPanels                 PatchPanel[]
+  networkCabinets             NetworkCabinet[]
+  cables                      Cable[]
+  fiberTrunkCables            FiberTrunkCable[]
+  networkSwitchs              NetworkSwitch[]
+  leafSwitchs                 LeafSwitch[]
+  customer                    Customer          @relation(fields: [customerId], references: [id])
+  customerId                  Int
+  dataHall                    DataHall          @relation(fields: [dataHallId], references: [id])
+  dataHallId                  Int
+}
+
+model SpineLeafSwitchRack {
+  id                           Int               @id @default(autoincrement())
+  name                         String
+  containsFiberPatchPanel      Boolean
+  containsCopperPatchPanel     Boolean
+  numberOfFiberPatchPanels     Int
+  numberOfCopperPatchPanels    Int
+  numberOfSpineSwitchesPerRack Int
+  patchPanels                  PatchPanel[]
+  networkCabinets              NetworkCabinet[]
+  cables                       Cable[]
+  fiberTrunkCables             FiberTrunkCable[]
+  networkSwitchs               NetworkSwitch[]
+  customer                     Customer          @relation(fields: [customerId], references: [id])
+  customerId                   Int
+  dataHall                     DataHall          @relation(fields: [dataHallId], references: [id])
+  dataHallId                   Int
+}
+
+model SuperSpineSwitchRack {
+  id                           Int               @id @default(autoincrement())
+  name                         String
+  containsFiberPatchPanel      Boolean
+  containsCopperPatchPanel     Boolean
+  numberOfFiberPatchPanels     Int
+  numberOfCopperPatchPanels    Int
+  numberOfSpineSwitchesPerRack Int
+  patchPanels                  PatchPanel[]
+  networkCabinets              NetworkCabinet[]
+  cables                       Cable[]
+  fiberTrunkCables             FiberTrunkCable[]
+  networkSwitches              NetworkSwitch[]
+  customer                     Customer          @relation(fields: [customerId], references: [id])
+  customerId                   Int
+  dataHall                     DataHall          @relation(fields: [dataHallId], references: [id])
+  dataHallId                   Int
+}
+
+model Containment {
+  id                                  Int      @id @default(autoincrement())
+  containmentType                     String
+  trayWidth                           Int
+  trayLength                          Int
+  trayHeight                          Int
+  numberOfPathwayLanes                Int
+  distanceBetweenRackTypeAndFirstLane Int
+  distanceBetweenEachLaneLevel        Int
+  startXCoordinate                    Int
+  endXCoordinate                      Int
+  startYCoordinate                    Int
+  endYCoordinate                      Int
+  costPerLength                       Float
+  customer                            Customer @relation(fields: [customerId], references: [id])
+  customerId                          Int
+  dataHall                            DataHall @relation(fields: [dataHallId], references: [id])
+  dataHallId                          Int
+}
+
+model Cooling {
+  id                    Int      @id @default(autoincrement())
+  coolingType           String
+  coolingAmountPerRack  Int
+  kwhConsumptionPerRack Int
+  customer              Customer @relation(fields: [customerId], references: [id])
+  customerId            Int
+  dataHall              DataHall @relation(fields: [dataHallId], references: [id])
+  dataHallId            Int
+}
+
+model ConnectivityPath {
+  id         Int      @id @default(autoincrement())
+  pathName   String
+  customer   Customer @relation(fields: [customerId], references: [id])
+  customerId Int
+  dataHall   DataHall @relation(fields: [dataHallId], references: [id])
+  dataHallId Int
+}
+
+model NetworkCabinet {
+  id                        Int                  @id @default(autoincrement())
+  name                      String
+  containsFiberPatchPanel   Boolean
+  containsCopperPatchPanel  Boolean
+  numberOfFiberPatchPanels  Int
+  numberOfCopperPatchPanels Int
+  widthInMm                 Int
+  heightInMm                Int
+  weightInKg                Int
+  networkSwitches           NetworkSwitch[]
+  patchPanels               PatchPanel[]
+  fiberTrunkCables          FiberTrunkCable[]
+  customer                  Customer             @relation(fields: [customerId], references: [id])
+  customerId                Int
+  dataHall                  DataHall             @relation(fields: [dataHallId], references: [id])
+  dataHallId                Int
+  networkRoom               NetworkRoom          @relation(fields: [networkRoomId], references: [id])
+  networkRoomId             Int
+  meetMeRoom                MeetMeRoom           @relation(fields: [meetMeRoomId], references: [id])
+  meetMeRoomId              Int
+  zone                      Zone                 @relation(fields: [zoneId], references: [id])
+  zoneId                    Int
+  leafSwitchRack            LeafSwitchRack       @relation(fields: [leafSwitchRackId], references: [id])
+  leafSwitchRackId          Int
+  spineLeafSwitchRack       SpineLeafSwitchRack  @relation(fields: [spineLeafSwitchRackId], references: [id])
+  spineLeafSwitchRackId     Int
+  superSpineSwitchRack      SuperSpineSwitchRack @relation(fields: [superSpineSwitchRackId], references: [id])
+  superSpineSwitchRackId    Int
+}
+
+model Cable {
+  id                     Int                  @id @default(autoincrement())
+  cableType              String
+  length                 String
+  customer               Customer             @relation(fields: [customerId], references: [id])
+  customerId             Int
+  dataHall               DataHall             @relation(fields: [dataHallId], references: [id])
+  dataHallId             Int
+  zone                   Zone                 @relation(fields: [zoneId], references: [id])
+  zoneId                 Int
+  gpuComputeRack         GpuComputeRack       @relation(fields: [gpuComputeRackId], references: [id])
+  gpuComputeRackId       Int
+  cpuComputeRack         CpuComputeRack       @relation(fields: [cpuComputeRackId], references: [id])
+  cpuComputeRackId       Int
+  leafSwitchRack         LeafSwitchRack       @relation(fields: [leafSwitchRackId], references: [id])
+  leafSwitchRackId       Int
+  spineLeafSwitchRack    SpineLeafSwitchRack  @relation(fields: [spineLeafSwitchRackId], references: [id])
+  spineLeafSwitchRackId  Int
+  superSpineSwitchRack   SuperSpineSwitchRack @relation(fields: [superSpineSwitchRackId], references: [id])
+  superSpineSwitchRackId Int
+}
+
+model NetworkType {
+  id             Int          @id @default(autoincrement())
+  name           String
+  customer       Customer     @relation(fields: [customerId], references: [id])
+  customerId     Int
+  dataHall       DataHall     @relation(fields: [dataHallId], references: [id])
+  dataHallId     Int
+  gpuFrontSide   GpuFrontSide @relation(fields: [gpuFrontSideId], references: [id])
+  gpuFrontSideId Int
+  gpuRearSide    GpuRearSide  @relation(fields: [gpuRearSideId], references: [id])
+  gpuRearSideId  Int
+}
+
+model NetworkTopology {
+  id             Int          @id @default(autoincrement())
+  name           String
+  customer       Customer     @relation(fields: [customerId], references: [id])
+  customerId     Int
+  dataHall       DataHall     @relation(fields: [dataHallId], references: [id])
+  dataHallId     Int
+  gpuFrontSide   GpuFrontSide @relation(fields: [gpuFrontSideId], references: [id])
+  gpuFrontSideId Int
+  gpuRearSide    GpuRearSide  @relation(fields: [gpuRearSideId], references: [id])
+  gpuRearSideId  Int
+}
+
+model GpuFrontSide {
+  id                Int               @id @default(autoincrement())
+  name              String
+  gpuPorts          GpuPort[]
+  networkTopologies NetworkTopology[]
+  networkTypes      NetworkType[]
+  customer          Customer          @relation(fields: [customerId], references: [id])
+  customerId        Int
+  dataHall          DataHall          @relation(fields: [dataHallId], references: [id])
+  dataHallId        Int
+  gpu               Gpu               @relation(fields: [gpuId], references: [id])
+  gpuId             Int
+}
+
+model GpuRearSide {
+  id                Int               @id @default(autoincrement())
+  name              String
+  gpuPorts          GpuPort[]
+  networkTopologies NetworkTopology[]
+  networkTypes      NetworkType[]
+  customer          Customer          @relation(fields: [customerId], references: [id])
+  customerId        Int
+  dataHall          DataHall          @relation(fields: [dataHallId], references: [id])
+  dataHallId        Int
+  gpu               Gpu               @relation(fields: [gpuId], references: [id])
+  gpuId             Int
+}
+
+model NetworkTypeSouth {
+  id                        Int      @id @default(autoincrement())
+  name                      String
+  numberOfFiberGbicPorts    Int
+  numberOfFiberPortsPerGbic Int
+  customer                  Customer @relation(fields: [customerId], references: [id])
+  customerId                Int
+  dataHall                  DataHall @relation(fields: [dataHallId], references: [id])
+  dataHallId                Int
+}
+
+model ScalableUnitGpuLeafSwitchRack {
+  id                         Int      @id @default(autoincrement())
+  numberOfSwitchesPerRack    Int
+  powerLimitPerGpuSwitchRack Int
+  containsFiberPatchPanel    Boolean
+  containsCopperPatchPanel   Boolean
+  numberOfFiberPatchPanels   Int
+  numberOfCopperPatchPanels  Int
+  powerFeedActive            Boolean
+  temperatureFeedActive      Boolean
+  waterLeakDetectionActive   Boolean
+  doorAccessSensorActive     Boolean
+  customer                   Customer @relation(fields: [customerId], references: [id])
+  customerId                 Int
+  dataHall                   DataHall @relation(fields: [dataHallId], references: [id])
+  dataHallId                 Int
+}
+
+model LeafSwitchGbicPort {
+  id                        Int      @id @default(autoincrement())
+  nameOfFiberGbic           String
+  numberOfFiberPortsPerGbic Int
+  sideAInstalledOnLeft      Boolean
+  sideBInstalledOnLeft      Boolean
+  customer                  Customer @relation(fields: [customerId], references: [id])
+  customerId                Int
+  dataHall                  DataHall @relation(fields: [dataHallId], references: [id])
+  dataHallId                Int
+}
+
+model User {
+  id       Int    @id @default(autoincrement())
+  username String @unique
+  password String
+}
